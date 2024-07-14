@@ -10,8 +10,9 @@ import {
 } from '../auth/dtos/authRequests.dto';
 import { CustomErrResDto, CustomListResDto, CustomResDto } from 'src/helpers/schemas.dto';
 import { response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
-
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
