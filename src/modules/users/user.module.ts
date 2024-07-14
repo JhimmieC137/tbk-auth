@@ -8,8 +8,9 @@ import { CustomInfoResDto, CustomListResDto, CustomResDto } from '../../helpers/
 import { User } from './entities/user.entity';
 import { Profile } from './entities/profile.entity';
 import { Kyc } from './entities/kyc.entity';
+import { TokenBlacklist } from '../auth/entities/blacklist.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Profile, Kyc])],
+  imports: [TypeOrmModule.forFeature([User, Profile, Kyc, TokenBlacklist])],
   controllers: [UserController,],
   providers: [UserService, CustomInfoResDto, CustomListResDto, CustomResDto],
 })
