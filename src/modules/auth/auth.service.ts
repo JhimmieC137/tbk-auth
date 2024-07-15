@@ -275,6 +275,23 @@ export class AuthService {
     this.rabbitClientFlight.emit('blacklist_token', token);
   }
 
+  async checkBlacklist(token: string): Promise<Boolean> {
+    try{
+      const blackToken = await this.blacklistRepository.find({
+        where: {token}
+      });
+  
+      if (!blackToken) {
+        return false;
+      };
+
+      return true;
+    } catch (erro) {
+      throw error;
+    }
+
+  };
+
   async requestPasswordReset(passwordReset: PasswordResetDto) {
     try{
       const userObj = await this.userRepository.findOne({

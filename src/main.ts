@@ -14,7 +14,7 @@ async function bootstrap() {
   
 
   const apiDocsConfig = new DocumentBuilder()
-  .addOAuth2()
+  .addBearerAuth()
   .setTitle('Travel Booking Platform - Auth and User Management')
   .setDescription('All endpoints for the platforms auth operations and user managemeent')
   .setVersion('1.0')
