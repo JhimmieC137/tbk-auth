@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -6,17 +6,20 @@ import {
   PasswordResetDto,
   RegisterDto,
   SignInDto,
+  SignOutDto,
   VerifyEmailDto,
 } from '../auth/dtos/authRequests.dto';
-import { CustomErrResDto, CustomListResDto, CustomResDto } from 'src/helpers/schemas.dto';
+import { CustomErrResDto, CustomInfoResDto, CustomListResDto, CustomResDto } from 'src/helpers/schemas.dto';
 import { response } from 'express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
+    private customInfoResDto: CustomInfoResDto,
     private customRes: CustomResDto,
     private customErr: CustomErrResDto,
   ) {}
@@ -41,11 +44,13 @@ export class AuthController {
     return response
   }
   
-  @Get('/sign-out')
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @Post('/sign-out')
   @HttpCode(HttpStatus.OK)
-  async logOut(): Promise<CustomResDto | CustomErrResDto> {
-    const response = this.customRes;
-    // response.results = {}
+  async logOut(@Body() signOutDto: SignOutDto): Promise<CustomInfoResDto | CustomErrResDto> {
+    await this.authService.signOut(signOutDto.token)
+    const response = this.customInfoResDto;
     response.message = 'User logged out successfully'
     return response
   }

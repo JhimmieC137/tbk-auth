@@ -29,10 +29,11 @@ export class UserService {
     const offset = (page - 1) * limit
     try{
       const [users, totalCount] = await this.userRepository.findAndCount({
-        relations: {
-          profile: true,
-          kyc: true,
-        },
+        relations: ['profile', 'profile.notifications', 'kyc'],
+        // relations: {
+        //   profile: true,
+        //   kyc: true,
+        // },
         where:{
           role: USER_TYPE.CLIENT,
           profile: {
@@ -51,7 +52,7 @@ export class UserService {
         page,
       }
     } catch (error) {
-      console.log(error)
+      throw error
     }
   }
 

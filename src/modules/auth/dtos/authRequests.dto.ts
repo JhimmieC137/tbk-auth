@@ -48,3 +48,6 @@ export class VerifyEmailDto {
   @ApiProperty()
   token: string = null;
 }
+
+
+export class SignOutDto extends VerifyEmailDto{}

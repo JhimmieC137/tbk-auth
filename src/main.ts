@@ -5,11 +5,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/user.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const apiDocsConfig = new DocumentBuilder()
+  .addBearerAuth()
   .setTitle('Travel Booking Platform - Auth and User Management')
   .setDescription('All endpoints for the platforms auth operations and user managemeent')
   .setVersion('1.0')
@@ -17,7 +19,7 @@ async function bootstrap() {
   .build();
 
   const apiDocs = SwaggerModule.createDocument(app, apiDocsConfig, {
-    include: [AuthModule, UserModule],
+    include: [AuthModule, UserModule, NotificationsModule],
   });
 
   SwaggerModule.setup('docs', app, apiDocs);

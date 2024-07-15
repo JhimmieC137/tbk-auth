@@ -1,7 +1,6 @@
 import { AuthModule } from 'src/modules/auth/auth.module';
+import { NotificationsModule } from 'src/modules/notifications/notifications.module';
 import { UserModule } from 'src/modules/users/user.module';
-// import { NinjasModule } from 'src/modules/ninjas/ninjas.module';
-// import { PhonesModule } from 'src/modules/phones/phones.module';
 
 export const baseRoute = 'api/v1';
 
@@ -15,7 +14,13 @@ const userRoute = {
   module: UserModule,
 };
 
+const notificationRoute = {
+  path: baseRoute,
+  module: NotificationsModule,
+};
+
 export const appRoutes = [
   authRoute, 
   userRoute,
+  notificationRoute
 ];

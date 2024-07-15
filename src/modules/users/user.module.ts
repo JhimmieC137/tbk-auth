@@ -9,9 +9,11 @@ import { User } from './entities/user.entity';
 import { Profile } from './entities/profile.entity';
 import { Kyc } from './entities/kyc.entity';
 import { TokenBlacklist } from '../auth/entities/blacklist.entity';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from '../auth/jwt.strategy';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Profile, Kyc, TokenBlacklist])],
+  imports: [PassportModule, TypeOrmModule.forFeature([User, Profile, Kyc, TokenBlacklist])],
   controllers: [UserController,],
-  providers: [UserService, CustomInfoResDto, CustomListResDto, CustomResDto],
+  providers: [UserService, JwtStrategy, CustomInfoResDto, CustomListResDto, CustomResDto],
 })
 export class UserModule {}

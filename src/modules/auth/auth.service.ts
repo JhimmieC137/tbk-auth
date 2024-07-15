@@ -1,4 +1,4 @@
-import { Injectable, Body } from '@nestjs/common';
+import { Injectable, Body, Inject } from '@nestjs/common';
 import {
   ChangePasswordDto,
   ConfirmEmailDto,
@@ -20,6 +20,8 @@ import { error } from 'console';
 import { hashedPassword, isMatch } from 'src/helpers/crypt';
 import dataSource from 'src/settings/dataSource.config';
 import { Kyc } from '../users/entities/kyc.entity';
+import { TokenBlacklist } from './entities/blacklist.entity';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
@@ -30,10 +32,16 @@ export class AuthService {
     private profileRepository: Repository<Profile>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(TokenBlacklist)
+    private blacklistRepository: Repository<TokenBlacklist>,
+    @Inject('HOTEL_SERVICE')
+    private rabbitClientHotel: ClientProxy,
+    // @Inject('FLIGHT_SERVICE')
+    // private rabbitClientFlight: ClientProxy,
     private jwtService: JwtService,
   ) {}
 
-  async registerUser(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
+  async registerUser(registerDto: RegisterDto): Promise<RegisterResponseDto> {
     try{
       const userObj = await this.userRepository.find({
         where: [
@@ -98,12 +106,12 @@ export class AuthService {
         }
       };
     } catch (error) {
-      console.log(error)
+      throw error
       // throw new INTERNAL_SERVER_ERROR_500("Something went wrong, could not register user.");
     }
   }
 
-  async signIn(@Body() signInDto: SignInDto) {
+  async signIn(signInDto: SignInDto) {
     try{
       const userObj = await this.userRepository.findOne({
         where: {
@@ -152,11 +160,28 @@ export class AuthService {
 
   }
 
-  signOut() {
-    return 'Signed out!';
+  async signOut( token: string) {
+
+    const black = await this.blacklistRepository.findOne({
+      where: {token}
+    })
+
+    if (black) {
+      throw new BAD_REQUEST_400("User logged out already")
+    }
+
+    // TODO: Blacklist token
+    const blackToken = new TokenBlacklist()
+    blackToken.token = token;
+
+    await this.blacklistRepository.save(blackToken) 
+
+    // TOOO: call services
+    this.rabbitClientHotel.emit('blacklist_token', token);
+    // this.rabbitClientFlight.emit('blacklist_token', token);
   }
 
-  async requestPasswordReset(@Body() passwordReset: PasswordResetDto) {
+  async requestPasswordReset(passwordReset: PasswordResetDto) {
     try{
       const userObj = await this.userRepository.findOne({
         where: {
@@ -185,7 +210,7 @@ export class AuthService {
     } 
   }
 
-  async passwordReset(@Body() changePasswordDto: ChangePasswordDto) {
+  async passwordReset(changePasswordDto: ChangePasswordDto) {
     
     try{
       const payload = await this.jwtService.verifyAsync(changePasswordDto.token)
@@ -210,6 +235,7 @@ export class AuthService {
 
       delete userObj.password;
 
+      // TODO: Blacklist token
 
       return {
         ...userObj,
@@ -234,7 +260,7 @@ export class AuthService {
     }
   }
 
-  async verifyUsermail(@Body() verifyEmailDto: VerifyEmailDto) {
+  async verifyUsermail(verifyEmailDto: VerifyEmailDto) {
     try{
       const payload = await this.jwtService.verifyAsync(verifyEmailDto.token)
       const userObj = await this.userRepository.findOne({
@@ -247,6 +273,7 @@ export class AuthService {
         }
       })
 
+      // TODO: Blacklist token
       
       if (!userObj) {
         throw new NOT_FOUND_404("User not found");
@@ -286,7 +313,7 @@ export class AuthService {
     }
   }
 
-  async confirmUserEmail(@Body() confirmEmail: ConfirmEmailDto) {
+  async confirmUserEmail(confirmEmail: ConfirmEmailDto) {
     try{
       const id = confirmEmail.id
       const userObj = await this.userRepository.findOne({
@@ -327,7 +354,7 @@ export class AuthService {
       };
 
     } catch (error) {
-      console.log(error)
+      throw error
     }
   }
 }
