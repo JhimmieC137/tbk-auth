@@ -1,8 +1,9 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Request, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
   ConfirmEmailDto,
+  OauthLoginDto,
   PasswordResetDto,
   RegisterDto,
   SignInDto,
@@ -13,6 +14,7 @@ import { CustomErrResDto, CustomInfoResDto, CustomListResDto, CustomResDto } fro
 import { response } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -23,6 +25,20 @@ export class AuthController {
     private customRes: CustomResDto,
     private customErr: CustomErrResDto,
   ) {}
+
+
+  
+  @Get('/Oauth')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) { }
+
+  @Get('/Oauth/callback')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req: OauthLoginDto) {
+    return this.authService.googleLogin(req)
+  }
+
 
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)

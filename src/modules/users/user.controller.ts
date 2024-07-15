@@ -21,6 +21,7 @@ import { paginationDto, usersQueryDto, UserUpdateDto } from './dtos/userRequests
 import { UsersQueryResponseDto } from './dtos/userResponses.dto';
 import { UUID } from 'crypto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('users')
 @Controller('users')
@@ -34,7 +35,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('/')
   async getUsers(@Request() req, @Query() usersQueryDto: usersQueryDto ): Promise<CustomListResDto> {
     const page = Number(usersQueryDto?.page) ?? 1;
     const limit = Number(usersQueryDto?.limit) ?? 10;

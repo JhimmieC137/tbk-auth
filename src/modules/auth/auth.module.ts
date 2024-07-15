@@ -13,6 +13,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { TokenBlacklist } from './entities/blacklist.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { GoogleStrategy } from './google.strategy';
 // import { DUPLICATE_USER_409 } from 'src/helpers/exceptions/auth';
 
 @Module({
@@ -44,6 +45,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, CustomInfoResDto, CustomListResDto, CustomResDto, CustomErrResDto],
+  providers: [AuthService, GoogleStrategy, JwtStrategy, CustomInfoResDto, CustomListResDto, CustomResDto, CustomErrResDto],
 })
 export class AuthModule {}

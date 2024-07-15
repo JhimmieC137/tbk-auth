@@ -49,5 +49,30 @@ export class VerifyEmailDto {
   token: string = null;
 }
 
+export class OauthUserDto {
+  @ApiProperty()
+  token: string;
+  
+  @ApiProperty()
+  email: string;
+  
+  @ApiProperty()
+  firstName: string
+  
+  @ApiProperty()
+  lastName: string;
+  
+  @ApiProperty()
+  picture: string;
+  
+  @ApiProperty()
+  accessToken: string;
+}
+
+export class OauthLoginDto {
+  @ApiProperty()
+  user: OauthUserDto;
+}
+
 
 export class SignOutDto extends VerifyEmailDto{}

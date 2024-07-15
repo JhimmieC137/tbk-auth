@@ -2,6 +2,7 @@ import { Injectable, Body, Inject } from '@nestjs/common';
 import {
   ChangePasswordDto,
   ConfirmEmailDto,
+  OauthLoginDto,
   PasswordResetDto,
   RegisterDto,
   SignInDto,
@@ -40,6 +41,99 @@ export class AuthService {
     private rabbitClientFlight: ClientProxy,
     private jwtService: JwtService,
   ) {}
+
+
+  
+  async googleLogin(req: OauthLoginDto) {
+    if (!req.user) {
+      return 'No user from google'
+    }
+
+    try{
+      const userObj = await this.userRepository.findOne({
+        where: {
+          email: req.user.email 
+        },
+        relations: ['profile', 'profile.notifications', 'kyc']
+      })
+
+      if (userObj && !userObj.profile.is_active) {
+        throw new BAD_REQUEST_400("User has been deactivated");
+      }
+      
+
+      if (!userObj) {
+        const newUser = this.userRepository.create({
+          email: req.user.email,
+          password: req.user.accessToken,
+          username: req.user.firstName
+        });
+        await this.userRepository.save(newUser);
+
+        const newUserProfile = this.profileRepository.create({user_id: newUser.id});
+        await this.profileRepository.save(newUserProfile);
+        
+        const newKyc = this.kycRepository.create({user_id: newUser.id})
+        await this.kycRepository.save(newKyc);
+        
+        newUser.profile = newUserProfile;      
+        newUser.kyc = newKyc;
+        await this.userRepository.save(newUser);
+        
+        const newUserObj = await this.userRepository.findOne({
+          where: {id: newUser.id},
+          relations: {
+            profile: true,
+            kyc: true,
+          },
+        })
+
+        delete userObj.password;
+      
+        return {
+          ...userObj,
+          token: {
+            access: await this.jwtService.signAsync({
+              id: userObj.id,
+              username: userObj.username,
+              role: userObj.role,
+              type: 'access'
+            }),
+            refresh: await this.jwtService.signAsync({
+              id: userObj.id,
+              username: userObj.username,
+              role: userObj.role,
+              type: 'refresh'
+            }),
+          }
+        };
+      }
+      
+      delete userObj.password;
+
+      
+      return {
+        ...userObj,
+        token: {
+          access: await this.jwtService.signAsync({
+            id: userObj.id,
+            username: userObj.username,
+            role: userObj.role,
+            type: 'access'
+          }),
+          refresh: await this.jwtService.signAsync({
+            id: userObj.id,
+            username: userObj.username,
+            role: userObj.role,
+            type: 'refresh'
+          }),
+        }
+      };
+
+    } catch (error) {
+      throw error
+    } 
+  }
 
   async registerUser(registerDto: RegisterDto): Promise<RegisterResponseDto> {
     try{

@@ -21,8 +21,6 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-
-
   async list(page: number, limit: number, search: string): Promise<UsersQueryResponseDto> {
     if (!page) page = 1;
     if (!limit) limit = 10;
