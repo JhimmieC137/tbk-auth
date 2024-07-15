@@ -9,6 +9,7 @@ import { UsersQueryResponseDto } from './dtos/userResponses.dto';
 import { log } from 'console';
 import { USER_TYPE } from './dtos/enums';
 import { BAD_REQUEST_400, NOT_FOUND_404 } from 'src/helpers/exceptions/auth';
+import { TokenBlacklist } from '../auth/entities/blacklist.entity';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,8 @@ export class UserService {
     private profileRepository: Repository<Profile>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(TokenBlacklist)
+    private blacklistRepository: Repository<TokenBlacklist>,
   ) {}
 
   async list(page: number, limit: number, search: string): Promise<UsersQueryResponseDto> {
@@ -150,4 +153,21 @@ export class UserService {
       throw error 
     }
   }
+
+  async checkBlacklist(token: string): Promise<Boolean> {
+    try{
+      const blackToken = await this.blacklistRepository.findOne({
+        where: {token}
+      });
+
+      if (!blackToken) {
+        return false;
+      };
+
+      return true;
+    } catch (error) {
+      throw error;
+    }
+
+  };
 }

@@ -13,6 +13,8 @@ export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
+    @InjectRepository(TokenBlacklist)
+    private blacklistRepository: Repository<TokenBlacklist>,
   ){}
 
   async create(createNotificationDto: CreateNotificationDto): Promise<Notification>  {
@@ -122,4 +124,21 @@ export class NotificationsService {
       throw error
     }
   }
+
+  async checkBlacklist(token: string): Promise<Boolean> {
+    try{
+      const blackToken = await this.blacklistRepository.findOne({
+        where: {token}
+      });
+      
+      if (!blackToken) {
+        return false;
+      };
+
+      return true;
+    } catch (error) {
+      throw error;
+    }
+
+  };
 }

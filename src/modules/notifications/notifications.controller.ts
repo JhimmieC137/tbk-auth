@@ -4,6 +4,8 @@ import { CreateNotificationDto, NotificationQueryDto, UpdateNotificationDto } fr
 import { CustomInfoResDto, CustomListResDto, CustomResDto } from 'src/helpers/schemas.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import * as reqType from 'express';
+import { FORBIDDEN_403 } from 'src/helpers/exceptions/auth';
 
 @ApiTags('Notification')
 @Controller('notifications')
@@ -15,10 +17,23 @@ export class NotificationsController {
     private readonly customListResDto: CustomListResDto,
   ) {}
 
+  async checkBlacklist(req: reqType.Request) {
+    try {
+      const isBlacklisted = await this.notificationsService.checkBlacklist(req.headers.authorization.split(' ')[1])
+      if (isBlacklisted) {
+        throw new FORBIDDEN_403("Invalid token")
+      }
+    } catch (error) {
+      throw error
+    }
+
+  }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Request() req, @Body() createNotificationDto: CreateNotificationDto): Promise<CustomResDto> {
+  async create(@Request() req: reqType.Request, @Body() createNotificationDto: CreateNotificationDto): Promise<CustomResDto> {
+    await this.checkBlacklist(req);
     const response = this.customResDto;
     response.results = await this.notificationsService.create(createNotificationDto);
     response.message = "Notification created successfully"
@@ -29,7 +44,8 @@ export class NotificationsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll(@Request() req, @Query() notificationQueryDto: NotificationQueryDto): Promise<CustomListResDto> {
+  async findAll(@Request() req: reqType.Request, @Query() notificationQueryDto: NotificationQueryDto): Promise<CustomListResDto> {
+    await this.checkBlacklist(req);
     const page = Number(notificationQueryDto?.page) ?? 1;
     const limit = Number(notificationQueryDto?.limit) ?? 10;
 
@@ -48,7 +64,8 @@ export class NotificationsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Request() req, @Param('id') id: string): Promise<CustomResDto> {
+  async findOne(@Request() req: reqType.Request, @Param('id') id: string): Promise<CustomResDto> {
+    await this.checkBlacklist(req);
     const notifications =  await this.notificationsService.findOne(id);
     
     const response = this.customResDto;
@@ -60,7 +77,8 @@ export class NotificationsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Request() req, @Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto): Promise<CustomResDto> {
+  async update(@Request() req: reqType.Request, @Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto): Promise<CustomResDto> {
+    await this.checkBlacklist(req);
     const notification =  await this.notificationsService.update(id, updateNotificationDto);
     
     const response = this.customResDto;
@@ -73,7 +91,8 @@ export class NotificationsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Request() req, @Param('id') id: string): Promise<CustomInfoResDto> {
+  async remove(@Request() req: reqType.Request, @Param('id') id: string): Promise<CustomInfoResDto> {
+    await this.checkBlacklist(req);
     await this.notificationsService.remove(id);
     const response = this.customInfoResDto;
     response.info = 'Deleted successfully';
