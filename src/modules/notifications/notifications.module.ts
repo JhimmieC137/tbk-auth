@@ -10,7 +10,7 @@ import { JwtStrategy } from '../auth/jwt.strategy';
 
 @Module({
   imports: [
-    PassportModule, 
+    PassportModule,
     TypeOrmModule.forFeature([Notification])
   ],
   controllers: [NotificationsController],

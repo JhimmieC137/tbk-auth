@@ -36,8 +36,8 @@ export class AuthService {
     private blacklistRepository: Repository<TokenBlacklist>,
     @Inject('HOTEL_SERVICE')
     private rabbitClientHotel: ClientProxy,
-    // @Inject('FLIGHT_SERVICE')
-    // private rabbitClientFlight: ClientProxy,
+    @Inject('FLIGHT_SERVICE')
+    private rabbitClientFlight: ClientProxy,
     private jwtService: JwtService,
   ) {}
 
@@ -178,7 +178,7 @@ export class AuthService {
 
     // TOOO: call services
     this.rabbitClientHotel.emit('blacklist_token', token);
-    // this.rabbitClientFlight.emit('blacklist_token', token);
+    this.rabbitClientFlight.emit('blacklist_token', token);
   }
 
   async requestPasswordReset(passwordReset: PasswordResetDto) {

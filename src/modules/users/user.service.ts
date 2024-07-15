@@ -30,10 +30,6 @@ export class UserService {
     try{
       const [users, totalCount] = await this.userRepository.findAndCount({
         relations: ['profile', 'profile.notifications', 'kyc'],
-        // relations: {
-        //   profile: true,
-        //   kyc: true,
-        // },
         where:{
           role: USER_TYPE.CLIENT,
           profile: {
@@ -60,10 +56,7 @@ export class UserService {
     try{
       const userObj = await this.userRepository.findOne({
         where: {id},
-        relations: {
-          profile: true,
-          kyc: true,
-        }
+        relations: ['profile', 'profile.notifications', 'kyc'],
       })
 
       if (!userObj) {
@@ -85,10 +78,6 @@ export class UserService {
     try{
       const user = await this.userRepository.findOne({
         where: {id},
-        relations: {
-          profile: true,
-          kyc: true,
-        }
       })
 
       if (!user) {
@@ -132,10 +121,7 @@ export class UserService {
       
       const updatedUserObj = await this.userRepository.findOne({
         where: {id},
-        relations: {
-          profile: true,
-          kyc: true,
-        }
+        relations: ['profile', 'profile.notifications', 'kyc'],
       })
 
       delete updatedUserObj.password

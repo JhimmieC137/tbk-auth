@@ -6,9 +6,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/user.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { Transport } from '@nestjs/microservices';
+import { baseConfig } from './settings/base.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
 
   const apiDocsConfig = new DocumentBuilder()
   .addBearerAuth()
