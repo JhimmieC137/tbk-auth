@@ -10,13 +10,11 @@ import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/user.module';
 import { appRoutes } from './helpers/router';
-import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
-    NotificationsModule,
     RouterModule.register([
       ...appRoutes
     ]),
@@ -25,7 +23,6 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
       load: [baseConfig, dbConfig],
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
-    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

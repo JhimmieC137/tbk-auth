@@ -39,6 +39,8 @@ export class AuthService {
     private rabbitClientHotel: ClientProxy,
     @Inject('FLIGHT_SERVICE')
     private rabbitClientFlight: ClientProxy,
+    @Inject('NOTIFICATION_SERVICE')
+    private rabbitClientNotification: ClientProxy,
     private jwtService: JwtService,
   ) {}
 
@@ -175,11 +177,16 @@ export class AuthService {
           kyc: true,
         },
       })
-
-      // const emailToken = await this.jwtService.signAsync({
-      //   id: newUser.id,
-      // })
       
+      // Send push notification
+      this.rabbitClientNotification.emit(
+        'notification_queue',
+        {
+          user_id: newUserObj.id,
+          messgae: `You just created an account at ${new Date()}`
+        }
+      )
+
       delete newUserObj.password;
       
       return {
@@ -201,7 +208,6 @@ export class AuthService {
       };
     } catch (error) {
       throw error
-      // throw new INTERNAL_SERVER_ERROR_500("Something went wrong, could not register user.");
     }
   }
 
@@ -228,6 +234,7 @@ export class AuthService {
         throw new BAD_REQUEST_400("Invalid credentials")
       }
       
+            
       delete userObj.password;
       
       return {

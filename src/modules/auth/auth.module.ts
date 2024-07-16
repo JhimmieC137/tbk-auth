@@ -36,6 +36,14 @@ import { GoogleStrategy } from './google.strategy';
           queue: 'flight_queue',
         }
       },
+      {
+        name: 'NOTIFICATION_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [baseConfig().rabbit_url],
+          queue: 'notification_queue',
+        }
+      },
     ]),
     TypeOrmModule.forFeature([User, Profile, Kyc, TokenBlacklist]),
     JwtModule.register({

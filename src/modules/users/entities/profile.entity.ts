@@ -1,10 +1,7 @@
-import { Notification } from 'src/modules/notifications/entities/notification.entity';
 import {
     Entity,
     Column,
     PrimaryGeneratedColumn,
-    OneToOne,
-    JoinColumn,
     CreateDateColumn,
     UpdateDateColumn,
     DeleteDateColumn,
@@ -31,9 +28,6 @@ import {
   
     @Column({ nullable: true })
     phone: string;
-
-    @OneToMany(() => Notification, (notification) => notification.profile) // note: we will create author property in the Photo class below
-    notifications: Notification[]
 
     @CreateDateColumn({
       nullable: true

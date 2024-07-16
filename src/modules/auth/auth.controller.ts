@@ -59,9 +59,7 @@ export class AuthController {
     response.message = 'User logged in successfully'
     return response
   }
-  
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
+
   @Post('/sign-out')
   @HttpCode(HttpStatus.OK)
   async logOut(@Body() signOutDto: SignOutDto): Promise<CustomInfoResDto | CustomErrResDto> {

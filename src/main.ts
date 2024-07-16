@@ -10,8 +10,8 @@ import { Transport } from '@nestjs/microservices';
 import { baseConfig } from './settings/base.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  
+  const app = await NestFactory.create(AppModule)
+
 
   const apiDocsConfig = new DocumentBuilder()
   .addBearerAuth()

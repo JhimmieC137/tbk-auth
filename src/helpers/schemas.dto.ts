@@ -1,4 +1,3 @@
-import { Notification } from "src/modules/notifications/entities/notification.entity";
 import { User } from "src/modules/users/entities/user.entity";
 
 export class CustomInfoResDto {
@@ -26,7 +25,7 @@ export class CustomListResDto {
   total_count: number = null;
   page: number = null;
   next_page: number = null;
-  results: User[] | Notification[] = [];
+  results: User[] = [];
 }
 
 export class CustomResDto {

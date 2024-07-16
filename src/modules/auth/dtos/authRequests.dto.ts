@@ -45,7 +45,9 @@ export class ConfirmEmailDto {
 }
 
 export class VerifyEmailDto {
-  @ApiProperty()
+  @ApiProperty({
+    required: true,
+  })
   token: string = null;
 }
 
