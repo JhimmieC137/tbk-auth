@@ -20,7 +20,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { paginationDto, usersQueryDto, UserUpdateDto } from './dtos/userRequests.dto';
 import { UsersQueryResponseDto } from './dtos/userResponses.dto';
 import { UUID } from 'crypto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import * as reqType from 'express';
 import { FORBIDDEN_403 } from 'src/helpers/exceptions/auth';

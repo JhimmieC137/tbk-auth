@@ -10,7 +10,7 @@ import { Profile } from './entities/profile.entity';
 import { Kyc } from './entities/kyc.entity';
 import { TokenBlacklist } from '../auth/entities/blacklist.entity';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from '../auth/jwt.strategy';
+import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 @Module({
   imports: [PassportModule, TypeOrmModule.forFeature([User, Profile, Kyc, TokenBlacklist])],
   controllers: [UserController,],

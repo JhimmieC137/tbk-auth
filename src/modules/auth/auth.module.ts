@@ -9,12 +9,11 @@ import { baseConfig } from 'src/settings/base.config';
 import { UserModule } from '../users/user.module';
 import { Profile } from '../users/entities/profile.entity';
 import { Kyc } from '../users/entities/kyc.entity';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { TokenBlacklist } from './entities/blacklist.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { GoogleStrategy } from './google.strategy';
-// import { DUPLICATE_USER_409 } from 'src/helpers/exceptions/auth';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
