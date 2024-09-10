@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Request, Req } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Request, Req, Head } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -26,6 +26,11 @@ export class AuthController {
     private customErr: CustomErrResDto,
   ) {}
 
+
+  @Head("health")
+  async getHealth(): Promise<Boolean>{
+    return true;
+  }
 
   
   @Get('/Oauth')
