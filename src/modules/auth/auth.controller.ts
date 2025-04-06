@@ -133,4 +133,9 @@ export class AuthController {
     // response.message = 'Request successful'
     // return response
   }
+
+  @Post('/calls')
+  async calls(@Body() req: any) {
+    console.log(req)
+  }
 }
