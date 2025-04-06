@@ -10,6 +10,7 @@ import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/user.module';
 import { appRoutes } from './helpers/router';
+import { CallsModule } from './calls/calls.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { appRoutes } from './helpers/router';
       load: [baseConfig, dbConfig],
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
+    CallsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

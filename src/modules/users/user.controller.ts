@@ -24,6 +24,9 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import * as reqType from 'express';
 import { FORBIDDEN_403 } from 'src/helpers/exceptions/auth';
+import fs from "fs";
+import path from "path";
+import OpenAI from "openai";
 
 @ApiTags('users')
 @Controller('users')
@@ -66,6 +69,30 @@ export class UserController {
     response.message = 'Users retrieved successfully'
     response.next_page = users.page + 1
     return response;
+  }
+
+  @ApiBearerAuth()
+  @Get('/')
+  async testcalls(@Request() req: reqType.Request): Promise<CustomResDto> {
+
+    const response = this.customResDto
+    const openai = new OpenAI();
+    const speechFile = path.resolve("./speech.mp3");
+
+    const mp3 = await openai.audio.speech.create({
+      model: "gpt-4o-mini-tts",
+      voice: "coral",
+      input: "Today is a wonderful day to build something people love!",
+      instructions: "Speak in a cheerful and positive tone.",
+    });
+
+    const buffer = Buffer.from(await mp3.arrayBuffer());
+    await fs.promises.writeFile(speechFile, buffer);
+    response.results = {
+      id: 1
+    };
+    response.message = 'Request successful'
+    return response
   }
   
   @ApiBearerAuth()

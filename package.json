@@ -44,6 +44,7 @@
     "dotenv": "^16.3.1",
     "mysql2": "^3.6.5",
     "nest-router": "^1.0.9",
+    "openai": "^4.91.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
